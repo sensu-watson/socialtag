@@ -40,7 +40,7 @@ def count_number_of_annotates():
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
-    uri = 'http://192.168.33.11:8890/sparql'
+    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
     r = requests.get(uri, params={
         'default-graph-uri' : graphuri,
@@ -117,7 +117,7 @@ def fetch_annotates_from_tagname(tagname):
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
-    uri = 'http://192.168.33.11:8890/sparql'
+    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
     
     r = requests.get(uri, params={
         'default-graph-uri' : graphuri,
@@ -194,9 +194,9 @@ def post_tag():
     }
     '''
     graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
-    uri = 'http://192.168.33.11:8890/sparql-auth'
+    uri = 'http://lod.srmt.nitech.ac.jp/sparql-auth'
     user = 'dba'
-    password = 'dba'
+    password = 'srmt1ab'
     
     r = requests.get(uri, params={
         'default-graph-uri' : graphuri,

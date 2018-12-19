@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-:
+
 from bottle import Bottle, run, request, view
 import urllib
 import requests

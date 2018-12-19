@@ -135,7 +135,7 @@ def fetch_annotates_from_tagname(tagname):
 
 
 # ------------------
-# api部
+# api
 # ------------------
 app = Bottle()
 

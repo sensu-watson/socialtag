@@ -5,7 +5,7 @@ import urllib
 import requests
 
 # ------------------
-# utility部
+# utility
 # ------------------
 def fetch_all_tags():
     query = '''
@@ -164,7 +164,7 @@ def fetch_annotates_from_tagname(tagname):
 
 
 # ------------------
-# api部
+# api
 # ------------------
 app = Bottle()
 

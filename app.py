@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-:
+
 from bottle import Bottle, run, request, view
 import urllib
 import requests
@@ -13,7 +15,7 @@ def fetch_all_tags():
     }
     '''
     retformat = 'application/sparql-results+json'
-    graphuri = 'http://lod.srmt.nitech.ac.jp/socprob/'
+    graphuri = 'http://tag.srmt.nitech.ac.jp/socprob/'
     uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
     r = requests.get(uri, params={
@@ -24,11 +26,38 @@ def fetch_all_tags():
     responce = r.json()
 
     tags_array = []
+    count_array = []
     for x in responce['results']['bindings']:
         tag = x['label']['value']
+        count = count_number_of_annotates_at_tagname(tag)
         tags_array.append(tag)
+        count_array.append(count)
 
-    return tags_array
+    return tags_array, count_array
+
+
+def count_number_of_annotates_at_tagname(tagname):
+    query = '''
+    select count(*) where{
+      ?annotate a <http://lod.srmt.nitech.ac.jp/tags/ontology#annotate>.
+      ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#body> <http://tag.srmt.nitech.ac.jp/socprob/''' + tagname + '''>.
+      ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#target> ?target.
+      ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#creator> ?creator.
+    }
+    '''
+    retformat = 'application/sparql-results+json'
+    graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
+    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
+    
+    r = requests.get(uri, params={
+        'default-graph-uri' : graphuri,
+        'query' : query,
+        'format' : retformat
+    })
+    responce = r.json()
+
+    return responce['results']['bindings'][0]['callret-0']['value']
+
 
 
 
@@ -57,12 +86,12 @@ def count_number_of_annotates():
 def fetch_parent_tags(tagname):
     query = '''
     select ?label where {
-      <http://lod.srmt.nitech.ac.jp/socprob/''' + tagname + '''> <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent.
+      <http://tag.srmt.nitech.ac.jp/socprob/''' + tagname + '''> <http://www.w3.org/2000/01/rdf-schema#subClassOf> ?parent.
       ?parent <http://www.w3.org/2000/01/rdf-schema#label> ?label.
     }
     '''
     retformat = 'application/sparql-results+json'
-    graphuri = 'http://lod.srmt.nitech.ac.jp/socprob/'
+    graphuri = 'http://tag.srmt.nitech.ac.jp/socprob/'
     uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
     r = requests.get(uri, params={
@@ -83,12 +112,12 @@ def fetch_parent_tags(tagname):
 def fetch_child_tags(tagname):
     query = '''
     select ?label where {
-      ?child <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://lod.srmt.nitech.ac.jp/socprob/''' + tagname + '''>.
+      ?child <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://tag.srmt.nitech.ac.jp/socprob/''' + tagname + '''>.
       ?child <http://www.w3.org/2000/01/rdf-schema#label> ?label.
     }
     '''
     retformat = 'application/sparql-results+json'
-    graphuri = 'http://lod.srmt.nitech.ac.jp/socprob/'
+    graphuri = 'http://tag.srmt.nitech.ac.jp/socprob/'
     uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
     r = requests.get(uri, params={
@@ -110,7 +139,7 @@ def fetch_annotates_from_tagname(tagname):
     query = '''
     select * where{
       ?annotate a <http://lod.srmt.nitech.ac.jp/tags/ontology#annotate>.
-      ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#body> <http://lod.srmt.nitech.ac.jp/socprob/''' + tagname + '''>.
+      ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#body> <http://tag.srmt.nitech.ac.jp/socprob/''' + tagname + '''>.
       ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#target> ?target.
       ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#creator> ?creator.
     }
@@ -143,10 +172,11 @@ app = Bottle()
 @app.get('/taglist')
 @view('tags')
 def tags():
-    tags_array = fetch_all_tags()
+    tags_array, count_array = fetch_all_tags()
 
     return {
-        'tags_array' : tags_array
+        'tags_array' : tags_array,
+        'count_array' : count_array
     }
 
 
@@ -156,19 +186,25 @@ def socprob(tagname = '社会問題'):
     parent_array = fetch_parent_tags(tagname)
     child_array = fetch_child_tags(tagname)
     target_array = fetch_annotates_from_tagname(tagname)
+    count = count_number_of_annotates_at_tagname(tagname)
     
     return {
         'tagname' : tagname,
         'parent_array' : parent_array,
         'child_array' : child_array,
-        'target_array' : target_array
+        'target_array' : target_array,
+        'count' : count
     }
 
 
 @app.get('/annotate')
 @view('hello_template')
 def get_tag():
-    return None
+    tags_array, count_array = fetch_all_tags()
+    return {
+        'tags_array' : tags_array,
+        'count_array' : count_array,
+    }
 
 
 @app.post('/annotate')
@@ -203,7 +239,15 @@ def post_tag():
         'query' : query
     }, auth=requests.auth.HTTPDigestAuth(user, password))
 
-    return None
+    tags_array, count_array = fetch_all_tags()
 
 
-run(app, host='0.0.0.0', port=8080, debug=True)
+    return {
+        'tags_array' : tags_array,
+        'count_array' : count_array
+    }
+
+
+
+
+run(app, host='0.0.0.0', port=8088, debug=True)

@@ -219,7 +219,7 @@ def post_tag():
     PREFIX tags-annotate: <http://lod.srmt.nitech.ac.jp/tags/annotate/>
     PREFIX tags: <http://lod.srmt.nitech.ac.jp/tags/ontology#>
     
-    INSERT DATA
+    INSERT
     {
       tags-annotate:'''+str(number)+''' rdf:type tags:annotate ;
       tags:target <'''+annotate+'''> ;

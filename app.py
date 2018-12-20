@@ -59,8 +59,6 @@ def count_number_of_annotates_at_tagname(tagname):
     return responce['results']['bindings'][0]['callret-0']['value']
 
 
-
-
 def count_number_of_annotates():
     query = '''
     select count(*) where{
@@ -198,7 +196,7 @@ def socprob(tagname = '社会問題'):
 
 
 @app.get('/annotate')
-@view('hello_template')
+@view('annotate')
 def get_tag():
     tags_array, count_array = fetch_all_tags()
     return {
@@ -208,7 +206,7 @@ def get_tag():
 
 
 @app.post('/annotate')
-@view('hello_template')
+@view('annotate')
 def post_tag():
     tag = str(request.forms.tag)
     annotate = str(request.forms.annotate)

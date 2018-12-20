@@ -6,12 +6,12 @@
 	<body>
 		<h1>社会問題タグ付けフォーム</h1>
 		
-		<form method="POST" action="/">
-			付与タグ <input type="search" name="tag" list="datas">
+		<form method="POST" action="/annotate">
+			付与タグ <input size="100" type="search" name="tag" list="datas">
 			<br>
-			付与対象ページ <input type="text" name="annotate">
+			付与対象ページ <input size="100" type="text" name="annotate">
 			<br>
-			付与者email <input type="text" name="email">
+			付与者email <input size="100" type="text" name="email">
 			<br>
 			<input type="submit" value="送信">
 		</form>

@@ -20,7 +20,7 @@
 			% end
 		</ul>
 		
-		<h2>付与されたページ</h2>
+		<h2>付与されたページ({{count}})</h2>
 		<ul>
 			% for target in target_array:
 				<li><a href="{{target}}">{{target}}</li>

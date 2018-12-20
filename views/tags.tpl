@@ -8,8 +8,10 @@
 
 		
 		<ul>
-			% for tag in tags_array:
-				<li><a href="/socprob/{{tag}}">{{tag}}</a></li>
+			% for i in range(len(tags_array)):
+			%   if count_array[i] == 0:
+			%     continue
+				<li><a href="/socprob/{{tags_array[i]}}">{{tags_array[i]}}({{count_array[i]}})</a></li>
 			%	end
 		</ul>
 

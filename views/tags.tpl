@@ -12,7 +12,8 @@
 			%   if count_array[i] == "0":
 			%     continue
 			%   else:
-				<li><a href="/socprob/{{tags_array[i]}}">{{tags_array[i]}}({{count_array[i]}})</a></li>
+			<li><a href="/socprob/{{tags_array[i]}}">{{tags_array[i]}}({{count_array[i]}})</a></li>
+			%   end
 			%	end
 		</ul>
 

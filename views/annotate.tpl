@@ -9,9 +9,7 @@
 		<form method="POST" action="/annotate">
 			付与タグ <input size="100" type="search" name="tag" list="datas">
 			<br>
-			付与対象ページ <input size="100" type="text" name="annotate">
-			<br>
-			付与者email <input size="100" type="text" name="email">
+			付与対象ページID <input size="100" type="text" name="annotate">
 			<br>
 			<input type="submit" value="送信">
 		</form>

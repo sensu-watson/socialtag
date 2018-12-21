@@ -210,7 +210,6 @@ def get_tag():
 def post_tag():
     tag = str(request.forms.tag)
     annotate = str(request.forms.annotate)
-    email = (request.forms.email)
     
     number = count_number_of_annotates()
     
@@ -222,9 +221,9 @@ def post_tag():
     INSERT
     {
       tags-annotate:'''+str(number)+''' rdf:type tags:annotate ;
-      tags:target <'''+annotate+'''> ;
+      tags:target <http://lod.srmt.nitech.ac.jp/MissionForest/tasks/'''+annotate+'''> ;
       tags:body <'''+tag+'''> ;
-      tags:creator "'''+email+'''" .
+      tags:creator "m-watanabe@srmtlab.org" .
     }
     '''
     graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'

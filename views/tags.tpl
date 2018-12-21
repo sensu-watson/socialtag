@@ -9,8 +9,9 @@
 		
 		<ul>
 			% for i in range(len(tags_array)):
-			%   if count_array[i] == 0:
+			%   if count_array[i] == "0":
 			%     continue
+			%   else:
 				<li><a href="/socprob/{{tags_array[i]}}">{{tags_array[i]}}({{count_array[i]}})</a></li>
 			%	end
 		</ul>

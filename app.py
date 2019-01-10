@@ -66,7 +66,7 @@ def count_number_of_annotates():
     }
     '''
     retformat = 'application/sparql-results+json'
-    graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
+    graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
     uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
     r = requests.get(uri, params={
@@ -143,7 +143,7 @@ def fetch_annotates_from_tagname(tagname):
     }
     '''
     retformat = 'application/sparql-results+json'
-    graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
+    graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
     uri = 'http://lod.srmt.nitech.ac.jp/sparql'
     
     r = requests.get(uri, params={
@@ -221,12 +221,12 @@ def post_tag():
     INSERT
     {
       tags-annotate:'''+str(number)+''' rdf:type tags:annotate ;
-      tags:target <http://lod.srmt.nitech.ac.jp/MissionForest/tasks/'''+annotate+'''> ;
+      tags:target <http://lod.srmt.nitech.ac.jp/resource/MissionForest/tasks/'''+annotate+'''> ;
       tags:body <'''+tag+'''> ;
       tags:creator "m-watanabe@srmtlab.org" .
     }
     '''
-    graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
+    graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
     uri = 'http://lod.srmt.nitech.ac.jp/sparql-auth'
     user = 'dba'
     password = 'srmt1ab'

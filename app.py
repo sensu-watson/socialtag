@@ -5,6 +5,12 @@ import urllib
 import requests
 
 # ------------------
+# global val
+# ------------------
+sparql_endpoint_url = 'http://lod.srmt.nitech.ac.jp/sparql'
+sparql_endpoint_url_auth = 'http://lod.srmt.nitech.ac.jp/sparql-auth'
+
+# ------------------
 # utility
 # ------------------
 def fetch_all_tags():
@@ -16,9 +22,8 @@ def fetch_all_tags():
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://tag.srmt.nitech.ac.jp/socprob/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url, params={
         'default-graph-uri' : graphuri,
         'query' : query,
         'format' : retformat
@@ -46,10 +51,9 @@ def count_number_of_annotates_at_tagname(tagname):
     }
     '''
     retformat = 'application/sparql-results+json'
-    graphuri = 'http://lod.srmt.nitech.ac.jp/tags/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
+    graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
     
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url, params={
         'default-graph-uri' : graphuri,
         'query' : query,
         'format' : retformat
@@ -67,9 +71,8 @@ def count_number_of_annotates():
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url, params={
         'default-graph-uri' : graphuri,
         'query' : query,
         'format' : retformat
@@ -90,9 +93,8 @@ def fetch_parent_tags(tagname):
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://tag.srmt.nitech.ac.jp/socprob/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url, params={
         'default-graph-uri' : graphuri,
         'query' : query,
         'format' : retformat
@@ -116,9 +118,8 @@ def fetch_child_tags(tagname):
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://tag.srmt.nitech.ac.jp/socprob/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
 
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url, params={
         'default-graph-uri' : graphuri,
         'query' : query,
         'format' : retformat
@@ -135,18 +136,25 @@ def fetch_child_tags(tagname):
 
 def fetch_annotates_from_tagname(tagname):
     query = '''
-    select * where{
+    select * from <http://mf.srmt.nitech.ac.jp/tags/> where{
       ?annotate a <http://lod.srmt.nitech.ac.jp/tags/ontology#annotate>.
       ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#body> <http://tag.srmt.nitech.ac.jp/socprob/''' + tagname + '''>.
       ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#target> ?target.
       ?annotate <http://lod.srmt.nitech.ac.jp/tags/ontology#creator> ?creator.
+      
+      {
+        select ?target ?name
+        from <http://mf.srmt.nitech.ac.jp/>
+        where {
+         ?target <http://purl.org/dc/terms/title> ?name.
+        }
+      }
     }
     '''
     retformat = 'application/sparql-results+json'
     graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql'
     
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url, params={
         'default-graph-uri' : graphuri,
         'query' : query,
         'format' : retformat
@@ -154,11 +162,14 @@ def fetch_annotates_from_tagname(tagname):
     responce = r.json()
 
     target_array = []
+    name_array = []
     for x in responce['results']['bindings']:
         target = x['target']['value']
+        name = x['name']['value']
         target_array.append(target)
+        name_array.append(name)
 
-    return target_array
+    return target_array, name_array
 
 
 # ------------------
@@ -183,7 +194,7 @@ def tags():
 def socprob(tagname = '社会問題'):
     parent_array = fetch_parent_tags(tagname)
     child_array = fetch_child_tags(tagname)
-    target_array = fetch_annotates_from_tagname(tagname)
+    target_array, name_array = fetch_annotates_from_tagname(tagname)
     count = count_number_of_annotates_at_tagname(tagname)
     
     return {
@@ -191,6 +202,7 @@ def socprob(tagname = '社会問題'):
         'parent_array' : parent_array,
         'child_array' : child_array,
         'target_array' : target_array,
+        'name_array' : name_array,
         'count' : count
     }
 
@@ -227,11 +239,10 @@ def post_tag():
     }
     '''
     graphuri = 'http://mf.srmt.nitech.ac.jp/tags/'
-    uri = 'http://lod.srmt.nitech.ac.jp/sparql-auth'
     user = 'dba'
     password = 'srmt1ab'
     
-    r = requests.get(uri, params={
+    r = requests.get(sparql_endpoint_url_auth, params={
         'default-graph-uri' : graphuri,
         'query' : query
     }, auth=requests.auth.HTTPDigestAuth(user, password))

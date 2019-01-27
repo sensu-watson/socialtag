@@ -16,8 +16,8 @@
 		
 		
 		<datalist id="datas">
-			% for tag in tags_array:
-			  <option value="http://tag.srmt.nitech.ac.jp/socprob/{{tag}}">{{tag}}</option>
+			% for i in range(len(tags_array)):
+			  <option value="{{tags_array[i]}}">{{labels_array[i]}}</option>
 			% end
 		</datalist>
 

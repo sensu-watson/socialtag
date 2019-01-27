@@ -4,8 +4,11 @@
 		<title>{{tagname}} | 社会問題タグ</title>
 	</head>
 	<body>
+		<a href="/">タグ一覧</a>
+		
+		
 		<h1>{{tagname}} | 社会問題タグ</h1>
-
+		
 		<h2>親タグ</h2>
 		<ul>
 			% for parent in parent_array:
@@ -22,9 +25,9 @@
 		
 		<h2>付与されたページ({{count}})</h2>
 		<ul>
-			% for target in target_array:
-				<li><a href="{{target}}">{{target}}</li>
-			%	end
+			% for i in range(len(target_array)):
+				<li><a href="{{target_array[i]}}">{{name_array[i]}}</li>
+			% end
 		</ul>
 
 	</body>
